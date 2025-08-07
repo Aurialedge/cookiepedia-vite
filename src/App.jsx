@@ -4,7 +4,7 @@ import Login from './components/Login';
 import Signup from './components/Signup';
 import Chatbot from './components/Chatbot';
 import TargetCursor from './components/feature/TargetCursor';
-import StarBorder from './components/feature/StarBorder';
+//import StarBorder from './components/feature/StarBorder';
 
 function App() {
   return (
@@ -21,7 +21,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
       </Routes>
-      <h1><Chatbot /></h1>
+      <Chatbot />
 
      
     </div>
