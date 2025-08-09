@@ -4,6 +4,7 @@ import ImageTrail from './feature/ImageTrail';
 import AnimatedHeadline from './feature/AnimatedHeadline';
 import InfiniteScroll from './feature/InfiniteScroll';
 import AnimatedList from './feature/AnimatedList';
+import InfoSection from './feature/InfoSection';
 
 
 const trendingRecipes = [
@@ -49,71 +50,71 @@ function Home() {
         </div>
       </nav>
       <div className="main-layout">
-      <div className="main-content-area">
-        <div className="image-trail-background">
-          <ImageTrail
-            items={[
-              'images/Recipe1.webp',
-              'images/Recipe2.webp',
-              'images/Recipe3.webp',
-              'images/Recipe4.jpg',
-              'images/Recipe5.jpg',
-              'images/Recipe6.jpg',
-              'images/Recipe7.webp',
-              'images/Recipe8.avif',
-              // ...
-            ]}
-            variant={1}
-          />
-        </div>
-        <div className="content-overlay">
-          <div className="welcome-content">
-            <h1>Cookiepedia !!</h1>
+        <div className="main-content-area">
+          <div className="image-trail-background">
+            <ImageTrail
+              items={[
+                'images/Recipe1.webp',
+                'images/Recipe2.webp',
+                'images/Recipe3.webp',
+                'images/Recipe4.jpg',
+                'images/Recipe5.jpg',
+                'images/Recipe6.jpg',
+                'images/Recipe7.webp',
+                'images/Recipe8.avif',
+                // ...
+              ]}
+              variant={1}
+            />
           </div>
-          <div className="search-container">
-            <input id="search" className="input cursor-target" type="text" placeholder="Search for recipes...🔍︎" />
+          <div className="content-overlay">
+            <div className="welcome-content">
+              <h1>Cookiepedia !!</h1>
+            </div>
+            <div className="search-container">
+              <input id="search" className="input cursor-target" type="text" placeholder="Search for recipes...🔍︎" />
+            </div>
           </div>
         </div>
-      </div>
 
-      <hr className="section-divider" />
-      <AnimatedHeadline />
-        
-      <div className="infinite-scroll-row">
-        <div className="infinite-scroll-column">
-          <InfiniteScroll
-            items={mediaItems}
-            isTilted={true}
-            tiltDirection='left'
-            autoplay={true}
-            autoplaySpeed={1.5}
-            autoplayDirection="down"
-            pauseOnHover={true}
-          />
+        <hr className="section-divider" />
+        <AnimatedHeadline />
+          
+        <div className="infinite-scroll-row">
+          <div className="infinite-scroll-column">
+            <InfiniteScroll
+              items={mediaItems}
+              isTilted={true}
+              tiltDirection='left'
+              autoplay={true}
+              autoplaySpeed={1.5}
+              autoplayDirection="down"
+              pauseOnHover={true}
+            />
+          </div>
+          <div className="infinite-scroll-column">
+            <InfiniteScroll
+              items={[...mediaItems.slice(5, 10)].reverse()}
+              isTilted={true}
+              tiltDirection='left'
+              autoplay={true}
+              autoplaySpeed={1.5}
+              pauseOnHover={true}
+            />
+          </div>
+          <div className="infinite-scroll-column">
+            <InfiniteScroll
+              items={mediaItems}
+              isTilted={true}
+              tiltDirection='left'
+              autoplay={true}
+              autoplaySpeed={3}
+              autoplayDirection="down"
+              pauseOnHover={true}
+            />
+          </div>
         </div>
-        <div className="infinite-scroll-column">
-          <InfiniteScroll
-            items={[...mediaItems.slice(5, 10)].reverse()}
-            isTilted={true}
-            tiltDirection='left'
-            autoplay={true}
-            autoplaySpeed={1.5}
-            pauseOnHover={true}
-          />
-        </div>
-        <div className="infinite-scroll-column">
-          <InfiniteScroll
-            items={mediaItems}
-            isTilted={true}
-            tiltDirection='left'
-            autoplay={true}
-            autoplaySpeed={3}
-            autoplayDirection="down"
-            pauseOnHover={true}
-          />
-        </div>
-      </div>
-
+        <InfoSection />
       </div>
       <div className="trending-list-container">
         <h3>Trending Recipes</h3>

@@ -2,7 +2,7 @@ body {
   font-family: sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f5f5f5;
+  background-color: #f3e5f5; /* Light Purple */
 }
 
 
@@ -10,21 +10,12 @@ main {
   padding: 0rem;
 }
 
-footer {
-  background-color: #333;
-  color: white;
-  padding: 1rem;
-  text-align: center;
-  
-  bottom: 0;
-  width: 100%;
-}
 
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #333;
+  background-color: #4a148c; /* Dark Purple */
   padding: 0.5rem 1rem;
   color: white;
 }
@@ -69,12 +60,12 @@ footer {
 }
 
 .is-primary {
-  background-color: #00d1b2;
+  background-color: #ec407a; /* Pink */
 }
 
 .is-light {
-  background-color: #f5f5f5;
-  color: #333;
+  background-color: #ce93d8; /* Light Pink/Purple */
+  color: #4a148c;
 }
 
 .chatbot-container {
@@ -113,7 +104,7 @@ footer {
 }
 
 .chatbot-header {
-  background-color: #333;
+  background-color: rgba(74, 20, 140, 0.5); /* Dark Purple Transparent */
   color: white;
   padding: 10px;
   display: flex;
@@ -137,7 +128,7 @@ footer {
   flex-grow: 1;
   padding: 10px;
   overflow-y: auto;
-  background-color: #f5f5f5;
+  background-color: transparent; /* Making body transparent for gradient */
 }
 
 .chatbot-footer {
@@ -155,7 +146,7 @@ footer {
 }
 
 .chatbot-footer button {
-  background-color: #00d1b2;
+  background-color: #ec407a; /* Pink */
   color: white;
   border: none;
   border-radius: 4px;
@@ -220,8 +211,8 @@ footer {
 #search:focus {
   width: 90%;
   max-width: 750px;
-  border-color: #00d1b2;
-  box-shadow: 0 5px 20px rgba(0, 209, 178, 0.2);
+  border-color: #ec407a; /* Pink */
+  box-shadow: 0 5px 20px rgba(236, 64, 122, 0.2);
 }
 
 .infinite-scroll-row {
@@ -230,6 +221,7 @@ footer {
   gap: 2rem;
   padding: 2rem 0;
   width: 100%;
+  margin-top: 5rem;
   /* background-color: #060010; */
 }
 
@@ -255,7 +247,7 @@ footer {
   top: 100px;
   right: 20px;
   width: 300px;
-  background: linear-gradient(145deg, rgba(244, 114, 182, 0.1), rgba(167, 139, 250, 0.1));
+  background: linear-gradient(145deg, rgba(236, 64, 122, 0.2), rgba(206, 147, 216, 0.2));
   backdrop-filter: blur(10px);
   border-radius: 15px;
   padding: 1rem;
@@ -271,7 +263,7 @@ footer {
   color: #fff;
   font-size: 1.4rem;
   font-weight: 600;
-  border-bottom: 2px solid #e91e63;
+  border-bottom: 2px solid #ec407a; /* Pink */
   padding-bottom: 0.5rem;
 }
 
@@ -299,7 +291,7 @@ footer {
   width: 60px;   /* Reduced size */
   height: 60px;  /* Reduced size */
   border-radius: 50%;
-  background-color: #9b59b6;
+  background-color: #ce93d8; /* Light Pink/Purple */
   border: none;
   cursor: pointer;
   padding: 0;
@@ -314,7 +306,7 @@ footer {
 .chatbot-window {
   width: 300px;
   height: 400px;
-  background: linear-gradient(145deg, rgba(42, 13, 63, 0.8), rgba(76, 26, 75, 0.8));
+  background: linear-gradient(145deg, rgba(74, 20, 140, 0.95), rgba(206, 147, 216, 0.95));
   border-radius: 15px;
   position: absolute;
   bottom: 80px; /* Position above toggle */
@@ -381,7 +373,7 @@ footer {
 }
 
 .chatbot-footer button {
-  background-color: #a78bfa;
+  background-color: #ec407a; /* Pink */
   border: none;
   color: #fff;
   padding: 0.5rem 1rem;
@@ -391,5 +383,5 @@ footer {
 }
 
 .chatbot-footer button:hover {
-  background-color: #f472b6;
+  background-color: #ce93d8; /* Light Pink/Purple */
 }
