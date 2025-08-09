@@ -1,0 +1,137 @@
+.login-container {
+  position: relative; /* For absolute positioning of the back button */
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f06, #f3e5f5, #ec407a, #ce93d8);
+  background-size: 400% 400%;
+  animation: shining 15s ease infinite;
+}
+
+@keyframes shining {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.login-left {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  padding: 3rem;
+}
+
+.login-video {
+  width: 100%;
+  max-width: 90%;
+  height: auto;
+  max-height: 90%;
+  border-radius: 15px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+  object-fit: cover;
+}
+
+.login-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  padding: 2rem;
+}
+
+.login-form-container {
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  color: #4a148c; /* Dark Purple */
+  background-color: rgba(255, 255, 255, 0.85);
+  padding: 3rem;
+  border-radius: 15px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+.back-button {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  z-index: 10;
+  width: 50px;
+  height: 50px;
+  background-color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: #4a148c; /* Dark Purple */
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: #ec407a; /* Pink */
+  color: #fff;
+  transform: scale(1.05);
+}
+
+.login-form-container h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.login-form-container p {
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+}
+
+.login-form input {
+  width: 100%;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ce93d8;
+  background-color: #fff;
+}
+
+.login-form button {
+  width: 100%;
+  padding: 1rem;
+  border: none;
+  border-radius: 8px;
+  background-color: #ec407a; /* Pink */
+  color: white;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-form button:hover {
+  background-color: #d81b60; /* Darker Pink */
+}
+
+.signup-link {
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.signup-link a {
+  color: #ec407a; /* Pink */
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.signup-link a:hover {
+  text-decoration: underline;
+}
+
