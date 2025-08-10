@@ -1,0 +1,77 @@
+.info-section {
+  padding: 5rem 2rem;
+  text-align: center;
+  color: #fff;
+  background-color: rgba(74, 20, 140, 0.5); /* Dark Purple Transparent */
+  backdrop-filter: blur(5px);
+  border-radius: 15px;
+  opacity: 0;
+  transform: translateY(50px);
+  animation: fadeInSlideUp 1s forwards;
+  animation-delay: 0.5s; /* Delay to start after scroll usually happens */
+}
+
+.info-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.info-text {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  max-width: 800px;
+  margin: 0 auto 1rem auto;
+}
+
+@keyframes fadeInSlideUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.problem-solver-section {
+  margin-top: 3rem;
+}
+
+.problem-solver-title {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.problems-container {
+  display: flex;
+  justify-content: space-around;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.problem-card {
+  flex: 1;
+  min-width: 280px;
+  padding: 2rem;
+  background-color: rgba(236, 64, 122, 0.1); /* Transparent Pink */
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.problem-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.problem-card h4 {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  color: #ec407a; /* Pink */
+}
+
+.problem-card p {
+  font-size: 1rem;
+  line-height: 1.5;
+}
