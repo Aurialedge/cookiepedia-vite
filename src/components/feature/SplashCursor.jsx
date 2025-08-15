@@ -15,13 +15,20 @@ function SplashCursor({
   SHADING = true,
   COLOR_UPDATE_SPEED = 10,
   BACK_COLOR = { r: 0.5, g: 0, b: 0 },
-  TRANSPARENT = true
+  TRANSPARENT = true,
+  excludeSelector = ''
 }) {
   const canvasRef = useRef(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+
+    function isOverExcludedElement(x, y) {
+      if (!excludeSelector) return false;
+      const elements = document.elementsFromPoint(x, y);
+      return elements.some(el => el.matches(excludeSelector) || el.closest(excludeSelector));
+    }
 
     function pointerPrototype() {
       this.id = -1;
@@ -34,6 +41,7 @@ function SplashCursor({
       this.down = false;
       this.moved = false;
       this.color = [0, 0, 0];
+      this.overExcluded = false;
     }
 
     let config = {
@@ -925,6 +933,7 @@ function SplashCursor({
     }
 
     function splatPointer(pointer) {
+      if (pointer.overExcluded) return;
       let dx = pointer.deltaX * config.SPLAT_FORCE;
       let dy = pointer.deltaY * config.SPLAT_FORCE;
       splat(pointer.texcoordX, pointer.texcoordY, dx, dy, pointer.color);
@@ -972,6 +981,7 @@ function SplashCursor({
       pointer.id = id;
       pointer.down = true;
       pointer.moved = false;
+      pointer.overExcluded = isOverExcludedElement(posX, posY);
       pointer.texcoordX = posX / canvas.width;
       pointer.texcoordY = 1.0 - posY / canvas.height;
       pointer.prevTexcoordX = pointer.texcoordX;
@@ -989,6 +999,7 @@ function SplashCursor({
       pointer.deltaX = correctDeltaX(pointer.texcoordX - pointer.prevTexcoordX);
       pointer.deltaY = correctDeltaY(pointer.texcoordY - pointer.prevTexcoordY);
       pointer.moved = Math.abs(pointer.deltaX) > 0 || Math.abs(pointer.deltaY) > 0;
+      pointer.overExcluded = isOverExcludedElement(posX, posY);
       pointer.color = color;
     }
 

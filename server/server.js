@@ -1,12 +1,30 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import mongoose from 'mongoose';
 import searchRoutes from './routes/search.js';
+import authRoutes from './routes/auth.js';
 import geminiService from './services/geminiService.js';
+import { auth } from './middleware/auth.js';
 
 // Load environment variables
 dotenv.config();
 
+// Connect to MongoDB
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/cookiepedia', {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log('MongoDB connected successfully');
+  } catch (error) {
+    console.error('MongoDB connection error:', error);
+    process.exit(1);
+  }
+};
+
+// Initialize Express app
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -28,8 +46,21 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
+// Connect to database
+connectDB();
+
+// Public Routes
 app.use('/api/search', searchRoutes);
+app.use('/api/auth', authRoutes);
+
+// Protected Routes (require authentication)
+app.get('/api/protected', auth, (req, res) => {
+  res.json({
+    success: true,
+    message: 'This is a protected route',
+    user: req.user
+  });
+});
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

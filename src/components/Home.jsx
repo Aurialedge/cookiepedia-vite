@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import ImageTrail from './feature/ImageTrail';
 import AnimatedHeadline from './feature/AnimatedHeadline';
 import InfiniteScroll from './feature/InfiniteScroll';
@@ -36,6 +37,22 @@ const mediaItems = [
 ];
 
 function Home() {
+  const { user } = useAuth();
+  const [activeFilters, setActiveFilters] = useState({
+    cookie: true,
+    cake: true,
+    bread: true,
+    dessert: true,
+    snack: true,
+    breakfast: true,
+    drink: true,
+    other: true,
+    vegetarian: false,
+    vegan: false,
+    glutenFree: false,
+    dairyFree: false,
+    nutFree: false,
+  });
   const [vegFilter, setVegFilter] = useState('all'); // 'all', 'veg', 'non-veg'
   const [contentFilter, setContentFilter] = useState('all'); // 'all', 'recipe', 'video'
   const [aiSuggest, setAiSuggest] = useState(false);
@@ -61,12 +78,20 @@ function Home() {
         <div className="navbar-end">
           <div className="navbar-item">
             <div className="buttons">
-              <Link to="/signup" className="button is-primary cursor-target">
-                <strong>Sign up</strong>
-              </Link>
-              <Link to="/login" className="button is-light cursor-target">
-                Log in
-              </Link>
+              {user ? (
+                <Link to="/dashboard" className="button is-primary cursor-target">
+                  <strong>Go to Dashboard</strong>
+                </Link>
+              ) : (
+                <>
+                  <Link to="/signup" className="button is-primary cursor-target">
+                    <strong>Sign up</strong>
+                  </Link>
+                  <Link to="/login" className="button is-light cursor-target">
+                    Log in
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
