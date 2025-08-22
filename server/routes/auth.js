@@ -27,14 +27,18 @@ router.post('/signup',
     body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters long')
   ],
   async (req, res) => {
+    console.log('Signup request received:', { body: req.body });
+    
     try {
       // Validate input
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
+        console.log('Validation errors:', errors.array());
         return res.status(400).json({ errors: errors.array() });
       }
 
       const { username, email, password } = req.body;
+      console.log('Processing signup for:', { username, email });
 
       // Check if email is already verified in database
       const existingUser = await User.findOne({ email });
@@ -44,6 +48,7 @@ router.post('/signup',
       
       // Check if username is taken in database
       const existingUsername = await User.findOne({ username });
+      console.log('Existing username check:', { username, exists: !!existingUsername });
       if (existingUsername) {
         return res.status(400).json({ message: 'Username already taken' });
       }
@@ -74,6 +79,7 @@ router.post('/signup',
         
         // Resend verification email
         await sendVerificationEmail(email, verificationCode);
+        console.log('Generated verification code:', { verificationCode, expiresAt: verificationExpires });
         return res.status(200).json({ 
           message: 'A new verification code has been sent to your email',
           email: email 
@@ -82,8 +88,8 @@ router.post('/signup',
 
       // Generate verification code
       const verificationCode = generateVerificationCode();
-      const verificationExpires = new Date();
-      verificationExpires.setHours(verificationExpires.getHours() + 1); // 1 hour expiry
+      const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
+      console.log('Generated verification code:', { verificationCode, expiresAt });
 
       // Store user data in memory (not in database yet)
       const userData = {
@@ -92,7 +98,7 @@ router.post('/signup',
         password, // In a real app, you should hash the password before saving
         verificationCode: {
           code: verificationCode,
-          expiresAt: verificationExpires
+          expiresAt: expiresAt
         },
         createdAt: new Date()
       };

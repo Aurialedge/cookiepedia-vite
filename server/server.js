@@ -13,14 +13,30 @@ dotenv.config();
 
 // Connect to MongoDB
 const connectDB = async () => {
+  const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/cookiepedia';
+  console.log('Attempting to connect to MongoDB at:', mongoURI);
+  
   try {
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/cookiepedia', {
+    await mongoose.connect(mongoURI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
     });
-    console.log('MongoDB connected successfully');
+    
+    // Verify the connection
+    const db = mongoose.connection;
+    db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+    db.once('open', () => {
+      console.log('MongoDB connected successfully to database:', db.name);
+    });
+    
+    return mongoose.connection;
   } catch (error) {
-    console.error('MongoDB connection error:', error);
+    console.error('MongoDB connection failed:', error);
+    console.error('Please make sure:');
+    console.error('1. MongoDB is running');
+    console.error('2. The connection string in .env is correct');
+    console.error('3. The MongoDB service has started');
     process.exit(1);
   }
 };
