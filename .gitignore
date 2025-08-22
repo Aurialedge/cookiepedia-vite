@@ -25,3 +25,10 @@ dist-ssr
 node_modules
 dist
 .env
+
+server/reset-user-password.js
+server/list-users.js
+server/fix-password.js
+server/fix-login.mjs
+server/direct-reset.js
+server/debug-login.js
