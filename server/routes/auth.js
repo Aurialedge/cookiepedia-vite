@@ -290,7 +290,10 @@ router.post('/login',
     body('password').exists().withMessage('Password is required')
   ],
   async (req, res) => {
-    console.log('🔑 Login attempt:', { email: req.body.email });
+    console.log('🔑 Login attempt received:', { 
+      email: req.body.email,
+      timestamp: new Date().toISOString()
+    });
     
     try {
       // Validate input
@@ -308,10 +311,11 @@ router.post('/login',
       console.log('🔍 Looking up user:', email);
 
       // Find user by email
+      console.log('🔍 Searching for user with email:', email);
       const user = await User.findOne({ email }).select('+password'); // Explicitly include password
       
       if (!user) {
-        console.error('❌ User not found:', email);
+        console.error('❌ User not found in database:', email);
         return res.status(401).json({ 
           success: false,
           message: 'Invalid email or password',
@@ -336,15 +340,39 @@ router.post('/login',
       }
 
       console.log('🔑 Verifying password...');
-      // Check password using model method
-      const isMatch = await user.comparePassword(password);
       
-      if (!isMatch) {
-        console.error('❌ Invalid password for user:', email);
-        return res.status(401).json({ 
+      // Debug: Log the stored and provided password hashes
+      console.log('🔍 Password comparison details:', {
+        providedPassword: password,
+        storedHash: user.password,
+        hashStartsWith: user.password ? user.password.substring(0, 10) + '...' : 'null',
+        hashLength: user.password ? user.password.length : 0
+      });
+      
+      try {
+        // Manual password comparison for debugging
+        const isMatch = await bcrypt.compare(password, user.password);
+        console.log('✅ Password comparison result:', isMatch);
+        
+        if (!isMatch) {
+          console.error('❌ Password comparison failed for user:', email);
+          return res.status(401).json({ 
+            success: false,
+            message: 'Invalid email or password',
+            error: 'INVALID_CREDENTIALS',
+            debug: {
+              storedHash: user.password ? user.password.substring(0, 10) + '...' : 'null',
+              hashAlgorithm: 'bcrypt'
+            }
+          });
+        }
+      } catch (error) {
+        console.error('❌ Error during password comparison:', error);
+        return res.status(500).json({
           success: false,
-          message: 'Invalid email or password',
-          error: 'INVALID_CREDENTIALS'
+          message: 'Error during authentication',
+          error: 'AUTH_ERROR',
+          debug: error.message
         });
       }
 
@@ -356,7 +384,13 @@ router.post('/login',
       const userData = user.toObject();
       delete userData.password;
 
-      console.log('✅ Login successful for user:', email);
+      console.log('✅ Login successful for user:', {
+        email: user.email,
+        userId: user._id,
+        isVerified: user.isVerified,
+        tokenGenerated: !!token
+      });
+      
       res.json({ 
         success: true,
         message: 'Login successful',

@@ -99,9 +99,92 @@
   width: 100%;
   padding: 1rem;
   margin-bottom: 1rem;
+  border: 1px solid #ddd;
   border-radius: 8px;
-  border: 1px solid #ce93d8;
-  background-color: #fff;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.login-form input:focus {
+  outline: none;
+  border-color: #9c27b0;
+  box-shadow: 0 0 0 2px rgba(156, 39, 176, 0.2);
+}
+
+/* Forgot Password Styles */
+.forgot-password {
+  margin: 1rem 0;
+  text-align: right;
+}
+
+.text-button {
+  background: none;
+  border: none;
+  color: #9c27b0;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0.5rem;
+  text-decoration: underline;
+  transition: color 0.3s ease;
+}
+
+.text-button:hover {
+  color: #7b1fa2;
+  text-decoration: none;
+}
+
+.forgot-password-form {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  text-align: left;
+}
+
+.forgot-password-form h3 {
+  margin-top: 0;
+  color: #4a148c;
+  font-size: 1.3rem;
+}
+
+.forgot-password-form p {
+  margin: 0.5rem 0 1.5rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.reset-button {
+  width: 100%;
+  padding: 0.8rem;
+  background-color: #9c27b0;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-bottom: 1rem;
+}
+
+.reset-button:hover:not(:disabled) {
+  background-color: #7b1fa2;
+}
+
+.reset-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.error-message {
+  color: #d32f2f;
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+.success-message {
+  color: #2e7d32;
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
 }
 
 .login-form button {

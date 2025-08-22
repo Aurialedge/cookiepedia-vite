@@ -55,7 +55,27 @@ userSchema.pre('save', async function(next) {
 
 // Method to compare password
 userSchema.methods.comparePassword = async function(candidatePassword) {
-  return await bcrypt.compare(candidatePassword, this.password);
+  console.log('🔑 Comparing passwords...');
+  console.log('  - Stored hash:', this.password ? 'exists' : 'missing');
+  
+  if (!candidatePassword) {
+    console.error('❌ No password provided for comparison');
+    return false;
+  }
+  
+  if (!this.password) {
+    console.error('❌ No stored password hash for user:', this.email);
+    return false;
+  }
+  
+  try {
+    const isMatch = await bcrypt.compare(candidatePassword, this.password);
+    console.log('  - Password match:', isMatch);
+    return isMatch;
+  } catch (error) {
+    console.error('❌ Error comparing passwords:', error.message);
+    return false;
+  }
 };
 
 // Generate JWT token

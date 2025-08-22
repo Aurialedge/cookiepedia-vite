@@ -49,30 +49,58 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password) => {
     try {
+      console.log('Attempting login for:', email);
       const response = await axios.post('http://localhost:5000/api/auth/login', {
         email,
         password
       });
       
+      console.log('Login response:', response.data);
+      
       if (response.data.success && response.data.token) {
         const { token, user } = response.data;
+        console.log('Login successful, setting token and user:', { 
+          userId: user._id, 
+          email: user.email,
+          hasToken: !!token 
+        });
+        
+        // Set the token first
         setToken(token);
+        // Then set the current user
         setCurrentUser(user);
+        
+        // Ensure token is stored in localStorage
+        localStorage.setItem('token', token);
+        
         return { 
           success: true, 
           user 
         };
       } else {
+        const errorMessage = response.data.message || 'Login failed. Please check your credentials.';
+        console.error('Login failed:', errorMessage);
         return { 
           success: false, 
-          message: response.data.message || 'Login failed. Please try again.' 
+          message: errorMessage,
+          error: response.data.error
         };
       }
     } catch (error) {
-      console.error('Login error:', error);
+      const errorMessage = error.response?.data?.message || 'Login failed. Please try again.';
+      const errorType = error.response?.data?.error || 'LOGIN_ERROR';
+      
+      console.error('Login error:', {
+        message: errorMessage,
+        type: errorType,
+        status: error.response?.status,
+        data: error.response?.data
+      });
+      
       return { 
         success: false, 
-        message: error.response?.data?.message || 'Login failed. Please try again.' 
+        message: errorMessage,
+        error: errorType
       };
     }
   };
