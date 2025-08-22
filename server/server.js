@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import searchRoutes from './routes/search.js';
 import authRoutes from './routes/auth.js';
+import chatRoutes from './routes/chat.js';
 import geminiService from './services/geminiService.js';
 import { auth } from './middleware/auth.js';
 
@@ -52,6 +53,7 @@ connectDB();
 // Public Routes
 app.use('/api/search', searchRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/chat', chatRoutes);
 
 // Protected Routes (require authentication)
 app.get('/api/protected', auth, (req, res) => {

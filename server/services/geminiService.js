@@ -7,16 +7,63 @@ class GeminiService {
   constructor() {
     this.apiKey = process.env.GEMINI_API_KEY;
     this.model = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
+    this.genAI = null;
     
-    if (!this.apiKey) {
-      console.warn('⚠️  GEMINI_API_KEY not found in environment variables');
-      this.genAI = null;
-    } else {
+    if (this.apiKey) {
       this.genAI = new GoogleGenerativeAI(this.apiKey);
       console.log('✅ Gemini AI service initialized');
+    } else {
+      console.warn('⚠️  GEMINI_API_KEY not found in environment variables');
+    }
+
+    // Initialize chat model if API key is available
+    this.chatModel = this.genAI?.getGenerativeModel({ 
+      model: this.model,
+      generationConfig: {
+        temperature: 0.7,
+        topP: 0.95,
+        topK: 40,
+        maxOutputTokens: 1024,
+      },
+    });
+  }
+
+  /**
+   * Generate a chat response using the Gemini model
+   * @param {Array} messages - Array of message objects with role and content
+   * @returns {Promise<string>} - The generated response text
+   */
+  async generateChatResponse(messages) {
+    if (!this.chatModel) {
+      throw new Error('Gemini API not configured. Please set GEMINI_API_KEY in environment variables.');
+    }
+
+    try {
+      // Start a chat session
+      const chat = this.chatModel.startChat({
+        history: messages.slice(0, -1), // All messages except the last one
+      });
+
+      // Get the last message as the current message
+      const currentMessage = messages[messages.length - 1];
+      
+      // Send the message and get the response
+      const result = await chat.sendMessage(currentMessage.parts[0].text);
+      const response = await result.response;
+      
+      return response.text();
+    } catch (error) {
+      console.error('Error generating chat response:', error);
+      throw new Error('Failed to generate response. Please try again.');
     }
   }
 
+  /**
+   * Get recipe suggestions based on a query
+   * @param {string} query - The search query
+   * @param {number} limit - Maximum number of suggestions to return
+   * @returns {Promise<Array>} - Array of recipe suggestions
+   */
   async getRecipeSuggestions(query, limit = 8) {
     if (!this.genAI) {
       throw new Error('Gemini API not configured. Please set GEMINI_API_KEY in environment variables.');
@@ -25,8 +72,7 @@ class GeminiService {
     try {
       const model = this.genAI.getGenerativeModel({ model: this.model });
 
-      const prompt = `
-You are a professional chef and recipe expert. Based on the search query "${query}", provide ${limit} relevant recipe suggestions.
+      const prompt = `You are a professional chef and recipe expert. Based on the search query "${query}", provide ${limit} relevant recipe suggestions.
 
 Return ONLY a valid JSON array with this exact structure (no additional text or formatting):
 [
@@ -55,8 +101,7 @@ Guidelines:
 - Vary difficulty levels.
 - Use existing image paths like "/images/Recipe1.avif" to "/images/Recipe8.avif".
 
-Search query: "${query}"
-`;
+Search query: "${query}"`;
 
       const result = await model.generateContent(prompt);
       const response = await result.response;
