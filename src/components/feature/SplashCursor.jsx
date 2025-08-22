@@ -26,8 +26,37 @@ function SplashCursor({
 
     function isOverExcludedElement(x, y) {
       if (!excludeSelector) return false;
-      const elements = document.elementsFromPoint(x, y);
-      return elements.some(el => el.matches(excludeSelector) || el.closest(excludeSelector));
+      
+      try {
+        const elements = document.elementsFromPoint(x, y);
+        const selectors = excludeSelector.split(',').map(s => s.trim()).filter(Boolean);
+        
+        return elements.some(el => {
+          // Always exclude pointer-events: none elements
+          if (window.getComputedStyle(el).pointerEvents === 'none') {
+            return true;
+          }
+          
+          // Check if element matches any of the selectors or is within a container
+          return selectors.some(selector => {
+            try {
+              // Check if element matches selector or has it as an ancestor
+              return el.matches(selector) || 
+                     el.closest(selector) || 
+                     // Check for form elements and interactive elements
+                     el.matches('input, button, textarea, select, label, a, [role="button"], [role="tab"]') ||
+                     // Check if any ancestor is a form element
+                     el.closest('input, button, textarea, select, label, a, [role="button"], [role="tab"]');
+            } catch (e) {
+              console.warn('Error matching selector:', selector, e);
+              return false;
+            }
+          });
+        });
+      } catch (error) {
+        console.error('Error in isOverExcludedElement:', error);
+        return false;
+      }
     }
 
     function pointerPrototype() {

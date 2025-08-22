@@ -1,10 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import './feature/css/Signup.css';
 import SplashCursor from './feature/SplashCursor';
+import '../styles/splash-cursor.css';
 
 function Signup() {
+  const formRef = useRef(null);
+  const [excludeSelector, setExcludeSelector] = useState('');
+
+  useEffect(() => {
+    // Set the exclude selector to target the form and all its children
+    setExcludeSelector('.signup-form, .signup-form *, .verification-form, .verification-form *');
+  }, []);
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -172,7 +181,9 @@ function Signup() {
 
   return (
     <div className="signup-container">
-      <SplashCursor excludeSelector="form, form *" />
+      <SplashCursor 
+        excludeSelector=".signup-form-container, .signup-form-container *" 
+      />
       <Link to="/" className="back-button">
         <i className="fas fa-arrow-left"></i>
       </Link>

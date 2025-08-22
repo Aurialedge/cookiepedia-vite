@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from "../context/AuthContext";
 import './feature/css/Login.css';
 import SplashCursor from './feature/SplashCursor';
+import '../styles/splash-cursor.css';
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -42,9 +43,19 @@ function Login() {
     }
   };
 
+  const formRef = useRef(null);
+  const [excludeSelector, setExcludeSelector] = useState('');
+
+  useEffect(() => {
+    // Set the exclude selector to target the form and all its children
+    setExcludeSelector('.login-form, .login-form *');
+  }, []);
+
   return (
     <div className="login-container">
-      <SplashCursor excludeSelector="form, form *" />
+      <SplashCursor 
+        excludeSelector=".login-form-container, .login-form-container *" 
+      />
       <Link to="/" className="back-button"><i className="fas fa-arrow-left"></i></Link>
       <div className="login-left">
         <video autoPlay loop muted playsInline className="login-video">
@@ -56,7 +67,7 @@ function Login() {
         <div className="login-form-container">
           <h2>Cookiepedia</h2>
           <p>Log in to discover amazing cookie recipes.</p>
-          <form className="login-form" onSubmit={handleSubmit}>
+          <form ref={formRef} className="login-form" onSubmit={handleSubmit}>
             <input 
               type="email" 
               placeholder="Email" 

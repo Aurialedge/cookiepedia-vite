@@ -11,33 +11,125 @@ import { auth } from './middleware/auth.js';
 // Load environment variables
 dotenv.config();
 
-// Connect to MongoDB
-const connectDB = async () => {
+// MongoDB connection state
+let isConnected = false;
+let retryCount = 0;
+const MAX_RETRIES = 5;
+const RETRY_DELAY = 5000; // 5 seconds
+
+// MongoDB connection options
+const mongoOptions = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 10000, // 10 seconds
+  socketTimeoutMS: 45000, // Keep connection alive for 45s
+  retryWrites: true,
+  w: 'majority'
+};
+
+// Connect to MongoDB with retry logic
+const connectDB = async (retry = false) => {
   const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/cookiepedia';
-  console.log('Attempting to connect to MongoDB at:', mongoURI);
+  
+  if (isConnected) {
+    console.log('ℹ️ Using existing MongoDB connection');
+    return mongoose.connection;
+  }
+
+  if (retry) {
+    retryCount++;
+    if (retryCount > MAX_RETRIES) {
+      console.error(`❌ Failed to connect to MongoDB after ${MAX_RETRIES} attempts`);
+      process.exit(1);
+    }
+    console.log(`🔄 Attempting to reconnect to MongoDB (${retryCount}/${MAX_RETRIES})...`);
+    await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+  } else {
+    console.log('🔌 Attempting to connect to MongoDB...');
+  }
+  
+  // Log connection attempt (masking password)
+  const maskedURI = mongoURI.replace(/(mongodb:\/\/[^:]+:)([^@]+)/, '$1*****');
+  console.log('📡 Connection string:', maskedURI);
   
   try {
-    await mongoose.connect(mongoURI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+    const conn = await mongoose.connect(mongoURI, mongoOptions);
+    isConnected = true;
+    retryCount = 0;
+    
+    console.log('✅ MongoDB Connected:', conn.connection.host);
+    console.log('📂 Database:', conn.connection.name);
+    
+    // List collections
+    try {
+      const collections = await conn.connection.db.listCollections().toArray();
+      console.log('👥 Collections:', collections.map(c => c.name).join(', '));
+    } catch (err) {
+      console.warn('⚠️ Could not list collections:', err.message);
+    }
+    
+    // Connection event handlers
+    mongoose.connection.on('connected', () => {
+      console.log('🔗 MongoDB connection is open');
+      isConnected = true;
     });
     
-    // Verify the connection
-    const db = mongoose.connection;
-    db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-    db.once('open', () => {
-      console.log('MongoDB connected successfully to database:', db.name);
+    mongoose.connection.on('error', (error) => {
+      console.error('❌ MongoDB connection error:', error.message);
+      isConnected = false;
+      // Attempt to reconnect on error
+      if (!retry) connectDB(true);
+    });
+    
+    mongoose.connection.on('disconnected', () => {
+      console.log('⚠️ MongoDB connection disconnected');
+      isConnected = false;
+      // Attempt to reconnect when disconnected
+      if (!retry) connectDB(true);
+    });
+    
+    // Handle process termination
+    process.on('SIGINT', async () => {
+      try {
+        await mongoose.connection.close();
+        console.log('👋 MongoDB connection closed through app termination');
+        process.exit(0);
+      } catch (err) {
+        console.error('Error closing MongoDB connection:', err);
+        process.exit(1);
+      }
     });
     
     return mongoose.connection;
   } catch (error) {
-    console.error('MongoDB connection failed:', error);
-    console.error('Please make sure:');
-    console.error('1. MongoDB is running');
-    console.error('2. The connection string in .env is correct');
-    console.error('3. The MongoDB service has started');
-    process.exit(1);
+    console.error('❌ MongoDB connection failed:', error.message);
+    
+    if (retry) {
+      console.log(`⏳ Retrying in ${RETRY_DELAY/1000} seconds...`);
+      return connectDB(true);
+    }
+    
+    console.error('\n🔧 Troubleshooting steps:');
+    console.error('1. Check if MongoDB is running');
+    console.error('2. Verify the connection string in .env is correct');
+    console.error('3. Check network connectivity to MongoDB');
+    console.error('4. Verify MongoDB user permissions');
+    console.error('5. Check if MongoDB port is accessible');
+    
+    if (process.env.NODE_ENV === 'development') {
+      console.error('\n🔍 Debug Info:');
+      console.error('- Node.js Version:', process.version);
+      console.error('- Mongoose Version:', require('mongoose/package.json').version);
+      console.error('- Environment:', process.env.NODE_ENV);
+      console.error('- Connection String:', mongoURI);
+    }
+    
+    // Don't exit in development to allow for auto-restart with nodemon
+    if (process.env.NODE_ENV !== 'development') {
+      process.exit(1);
+    }
+    
+    throw error;
   }
 };
 

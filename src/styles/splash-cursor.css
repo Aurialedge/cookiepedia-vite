@@ -1,0 +1,26 @@
+/* Ensure form containers block the splash cursor */
+.login-form-container,
+.signup-form-container {
+  position: relative;
+  z-index: 1000; /* Ensure it's above the splash cursor */
+  pointer-events: auto !important; /* Override any pointer-events: none */
+}
+
+/* Make sure form elements are interactive */
+.login-form-container *,
+.signup-form-container * {
+  pointer-events: auto !important;
+}
+
+/* Ensure the splash cursor stays behind the forms */
+.splash-cursor {
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Make sure the container doesn't block clicks */
+.login-container,
+.signup-container {
+  position: relative;
+  z-index: 1;
+}
