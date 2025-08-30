@@ -4,6 +4,7 @@ import Home from './components/Home';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import Dashboard from './components/Dashboard';
+import Feed from './components/feed/Feed';
 import Chatbot from './components/Chatbot';
 import Footer from './components/Footer';
 import TargetCursor from './components/feature/TargetCursor';
@@ -32,7 +33,15 @@ function AppContent() {
       />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
+                <Route path="/login" element={<Login />} />
+        <Route 
+          path="/feed" 
+          element={
+            <ProtectedRoute>
+              <Feed />
+            </ProtectedRoute>
+          } 
+        />
         <Route path="/signup" element={<Signup />} />
         <Route 
           path="/dashboard/*" 

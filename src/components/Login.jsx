@@ -53,8 +53,8 @@ function Login() {
       });
       
       if (result.success) {
-        console.log('✅ Login successful, navigating to /cook');
-        navigate('/cook');
+        console.log('✅ Login successful, navigating to /feed');
+        navigate('/feed');
       } else {
         // Handle specific error cases
         let errorMessage = 'Login failed. Please try again.';
