@@ -1,12 +1,18 @@
 import express from 'express';
+import { createServer } from 'http';
+import { WebSocketServer } from 'ws';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import searchRoutes from './routes/search.js';
 import authRoutes from './routes/auth.js';
 import chatRoutes from './routes/chat.js';
+import messageRoutes from './routes/messages.js';
+import reelRoutes from './routes/reels.js';
+import notificationRoutes from './routes/notifications.js';
 import geminiService from './services/geminiService.js';
 import { auth } from './middleware/auth.js';
+import { initializeWebSocket } from './websocket.js';
 
 // Load environment variables
 dotenv.config();
@@ -135,7 +141,11 @@ const connectDB = async (retry = false) => {
 
 // Initialize Express app
 const app = express();
+const server = createServer(app);
 const PORT = process.env.PORT || 5000;
+
+// Initialize WebSocket server
+initializeWebSocket(server);
 
 // Middleware
 app.use(cors({
@@ -162,6 +172,9 @@ connectDB();
 app.use('/api/search', searchRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/messages', messageRoutes);
+app.use('/api/reels', reelRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Protected Routes (require authentication)
 app.get('/api/protected', auth, (req, res) => {
@@ -198,8 +211,8 @@ app.use('*', (req, res) => {
   });
 });
 
-// Start server
-app.listen(PORT, () => {
+// Start HTTP server with WebSocket support
+server.listen(PORT, () => {
   console.log(`🚀 Cookiepedia Server running on port ${PORT}`);
   console.log(`📍 Health check: http://localhost:${PORT}/api/health`);
   console.log(`🔍 Search API: http://localhost:${PORT}/api/search`);
