@@ -7,24 +7,49 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
-    required: true,
+    required: [true, 'Username is required'],
     unique: true,
     trim: true,
-    minlength: 3,
-    maxlength: 30
+    minlength: [3, 'Username must be at least 3 characters'],
+    maxlength: [30, 'Username cannot exceed 30 characters'],
+    match: [/^[a-zA-Z0-9_.-]+$/, 'Username can only contain letters, numbers, dots, underscores and hyphens']
   },
   email: {
     type: String,
-    required: true,
+    required: [true, 'Email is required'],
     unique: true,
     trim: true,
     lowercase: true,
-    match: [/^\S+@\S+\.\S+$/, 'Please use a valid email address.']
+    match: [/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, 'Please use a valid email address']
   },
   password: {
     type: String,
-    required: true,
-    minlength: 8
+    required: [true, 'Password is required'],
+    minlength: [8, 'Password must be at least 8 characters long'],
+    select: false
+  },
+  name: {
+    type: String,
+    trim: true,
+    maxlength: [50, 'Name cannot exceed 50 characters']
+  },
+  bio: {
+    type: String,
+    maxlength: [150, 'Bio cannot exceed 150 characters'],
+    default: ''
+  },
+  website: {
+    type: String,
+    trim: true,
+    default: ''
+  },
+  profilePicture: {
+    type: String,
+    default: '/default-avatar.png'
+  },
+  coverPhoto: {
+    type: String,
+    default: '/default-cover.jpg'
   },
   isVerified: {
     type: Boolean,
@@ -34,19 +59,6 @@ const userSchema = new mongoose.Schema({
     code: String,
     expiresAt: Date
   },
-  profilePicture: {
-    type: String,
-    default: ''
-  },
-  bio: {
-    type: String,
-    maxlength: 150,
-    default: ''
-  },
-  website: {
-    type: String,
-    default: ''
-  },
   followers: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
@@ -55,11 +67,93 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }],
+  followersCount: {
+    type: Number,
+    default: 0
+  },
+  followingCount: {
+    type: Number,
+    default: 0
+  },
   channel: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Channel'
   },
+  role: {
+    type: String,
+    enum: ['user', 'creator', 'admin'],
+    default: 'user'
+  },
+  isActive: {
+    type: Boolean,
+    default: true
+  },
+  lastActive: {
+    type: Date,
+    default: Date.now
+  },
+  settings: {
+    notifications: {
+      email: {
+        type: Boolean,
+        default: true
+      },
+      push: {
+        type: Boolean,
+        default: true
+      },
+      newFollower: {
+        type: Boolean,
+        default: true
+      },
+      newComment: {
+        type: Boolean,
+        default: true
+      },
+      mentions: {
+        type: Boolean,
+        default: true
+      }
+    },
+    privacy: {
+      profileViewable: {
+        type: String,
+        enum: ['public', 'followers', 'private'],
+        default: 'public'
+      },
+      showOnlineStatus: {
+        type: Boolean,
+        default: true
+      }
+    }
+  },
+  socialLinks: {
+    youtube: {
+      type: String,
+      default: ''
+    },
+    instagram: {
+      type: String,
+      default: ''
+    },
+    twitter: {
+      type: String,
+      default: ''
+    },
+    tiktok: {
+      type: String,
+      default: ''
+    },
+    facebook: {
+      type: String,
+      default: ''
+    }
+  },
   createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  updatedAt: {
     type: Date,
     default: Date.now
   }
@@ -67,15 +161,35 @@ const userSchema = new mongoose.Schema({
 
 // Hash password before saving
 userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
-  
-  try {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
-  } catch (error) {
-    next(error);
+  // Only hash the password if it's modified
+  if (this.isModified('password')) {
+    try {
+      const salt = await bcrypt.genSalt(10);
+      this.password = await bcrypt.hash(this.password, salt);
+    } catch (error) {
+      return next(error);
+    }
   }
+  
+  // Update timestamps
+  this.updatedAt = Date.now();
+  
+  // Update counters if followers/following arrays are modified
+  if (this.isModified('followers')) {
+    this.followersCount = this.followers.length;
+  }
+  
+  if (this.isModified('following')) {
+    this.followingCount = this.following.length;
+  }
+  
+  next();
+});
+
+// Update timestamps on update
+userSchema.pre('findOneAndUpdate', function(next) {
+  this.set({ updatedAt: Date.now() });
+  next();
 });
 
 // Method to compare password

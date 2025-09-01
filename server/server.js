@@ -11,6 +11,7 @@ import messageRoutes from './routes/messages.js';
 import reelRoutes from './routes/reels.js';
 import notificationRoutes from './routes/notifications.js';
 import channelRoutes from './routes/channelRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 import geminiService from './services/geminiService.js';
 import { auth } from './middleware/auth.js';
 import { initializeWebSocket } from './websocket.js';
@@ -171,11 +172,12 @@ connectDB();
 // Public Routes
 app.use('/api/search', searchRoutes);
 app.use('/api/auth', authRoutes);
-app.use('/api/chat', chatRoutes);
-app.use('/api/messages', messageRoutes);
-app.use('/api/reels', reelRoutes);
-app.use('/api/notifications', notificationRoutes);
-app.use('/api/channels', channelRoutes);
+app.use('/api/chat', auth, chatRoutes);
+app.use('/api/messages', auth, messageRoutes);
+app.use('/api/reels', auth, reelRoutes);
+app.use('/api/notifications', auth, notificationRoutes);
+app.use('/api/channels', auth, channelRoutes);
+app.use('/api/users', auth, userRoutes);
 
 // Protected Routes (require authentication)
 app.get('/api/protected', auth, (req, res) => {
@@ -195,14 +197,8 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ 
-    error: 'Something went wrong!',
-    message: err.message 
-  });
-});
+// Error handling middleware (must be after all other middleware and routes)
+app.use(errorHandler);
 
 // 404 handler
 app.use('*', (req, res) => {

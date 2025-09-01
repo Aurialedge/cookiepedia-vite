@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { UserProvider } from './context/UserContext';
 import Home from './components/Home';
 import Login from './components/Login';
 import Signup from './components/Signup';
@@ -62,7 +63,9 @@ function AppContent() {
 function App() {
   return (
     <AuthProvider>
-      <AppContent />
+      <UserProvider>
+        <AppContent />
+      </UserProvider>
     </AuthProvider>
   );
 }
