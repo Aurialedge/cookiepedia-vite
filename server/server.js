@@ -10,6 +10,7 @@ import chatRoutes from './routes/chat.js';
 import messageRoutes from './routes/messages.js';
 import reelRoutes from './routes/reels.js';
 import notificationRoutes from './routes/notifications.js';
+import channelRoutes from './routes/channelRoutes.js';
 import geminiService from './services/geminiService.js';
 import { auth } from './middleware/auth.js';
 import { initializeWebSocket } from './websocket.js';
@@ -147,23 +148,22 @@ const PORT = process.env.PORT || 5000;
 // Initialize WebSocket server
 initializeWebSocket(server);
 
-// Middleware
-app.use(cors({
+// CORS configuration
+const corsOptions = {
   origin: [
     'http://localhost:5173',
     'http://localhost:5174', 
     'http://localhost:3000',
-    'http://127.0.0.1:5173',
-    'http://127.0.0.1:5174',
-    'http://127.0.0.1:3000'
+    'http://127.0.0.1:5173'
   ],
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  optionsSuccessStatus: 200 // Some legacy browsers choke on 204
-}));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+  optionsSuccessStatus: 200
+};
+
+// Middleware
+app.use(cors(corsOptions));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Connect to database
 connectDB();
@@ -175,6 +175,7 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/reels', reelRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/channels', channelRoutes);
 
 // Protected Routes (require authentication)
 app.get('/api/protected', auth, (req, res) => {

@@ -1,0 +1,40 @@
+/* Channel Header */
+.channel-header { width: 100%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+
+/* Cover Photo */
+.channel-cover { width: 100%; height: 200px; background-size: cover; background-position: center; position: relative; background-color: #f5f5f5; }
+.edit-cover-btn { position: absolute; bottom: 1rem; right: 1rem; background: rgba(0,0,0,0.6); color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; }
+
+/* Channel Info */
+.channel-info { display: flex; padding: 1.5rem; max-width: 1200px; margin: 0 auto; }
+.channel-avatar { position: relative; margin-top: -50px; margin-right: 1.5rem; }
+.channel-avatar img { width: 120px; height: 120px; border-radius: 50%; border: 4px solid white; object-fit: cover; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+.edit-avatar-btn { position: absolute; bottom: 5px; right: 5px; width: 30px; height: 30px; border-radius: 50%; background: #ff4e45; color: white; border: none; cursor: pointer; }
+
+/* Details */
+.channel-details { flex: 1; }
+.channel-details h1 { margin: 0 0 0.5rem 0; font-size: 1.5rem; color: #333; }
+.channel-handle { color: #606060; margin: 0 0 0.5rem 0; }
+.channel-stats { display: flex; gap: 1rem; margin: 0.5rem 0; color: #606060; }
+
+/* Buttons */
+.channel-actions { display: flex; gap: 1rem; margin: 1rem 0; }
+.subscribe-btn, .edit-channel-btn, .share-btn { padding: 0.5rem 1rem; border-radius: 20px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+.subscribe-btn { background: #ff4e45; color: white; border: none; }
+.subscribe-btn.subscribed { background: #f0f0f0; color: #333; }
+.edit-channel-btn { background: #f0f0f0; color: #333; text-decoration: none; border: 1px solid #ddd; }
+.share-btn { background: white; border: 1px solid #ddd; color: #333; }
+
+/* Navigation */
+.channel-nav { border-top: 1px solid #eee; }
+.channel-nav ul { display: flex; list-style: none; padding: 0; margin: 0; max-width: 1200px; margin: 0 auto; }
+.channel-nav li { padding: 1rem; color: #606060; cursor: pointer; }
+.channel-nav li.active { color: #ff4e45; border-bottom: 3px solid #ff4e45; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .channel-info { flex-direction: column; text-align: center; padding: 1rem; }
+  .channel-avatar { margin: -50px auto 1rem; }
+  .channel-actions { justify-content: center; }
+  .channel-nav ul { overflow-x: auto; padding: 0 1rem; }
+}

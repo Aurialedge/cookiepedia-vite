@@ -34,6 +34,31 @@ const userSchema = new mongoose.Schema({
     code: String,
     expiresAt: Date
   },
+  profilePicture: {
+    type: String,
+    default: ''
+  },
+  bio: {
+    type: String,
+    maxlength: 150,
+    default: ''
+  },
+  website: {
+    type: String,
+    default: ''
+  },
+  followers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  following: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  channel: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Channel'
+  },
   createdAt: {
     type: Date,
     default: Date.now
