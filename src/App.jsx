@@ -9,6 +9,7 @@ import Feed from './components/feed/Feed';
 import Chatbot from './components/Chatbot';
 import Footer from './components/Footer';
 import TargetCursor from './components/feature/TargetCursor';
+import ProfilePage from './pages/ProfilePage';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -49,6 +50,14 @@ function AppContent() {
           element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/:username" 
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
             </ProtectedRoute>
           } 
         />
