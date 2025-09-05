@@ -262,6 +262,8 @@
   
   .channel-card {
     flex-direction: column;
+    background: #eee;
+    border-color: #ccc;
   }
   
   .channel-avatar {
@@ -273,9 +275,6 @@
   .channel-info {
     padding: 1.25rem;
   }
-}
-  background: #eee;
-  border-color: #ccc;
 }
 
 .load-more-btn:disabled {
